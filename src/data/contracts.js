@@ -58,17 +58,17 @@ const SAMPLE = {
 	cost: 10000,
 	pid: 1,
 	UqURL: 'https://www.google.com',
-	name: 'Test NFT',
-	description: 'This is a test NFT',
+	name: 'Default NFT',
+	description: 'This is a default NFT',
 	url: 'https://www.google.com',
 	seller: '0x82b4F2da4b06cD712ccCEEc9f64c0BCfFd3c6147',
 	trxnHash: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
 };
 
-export async function MintNFT(data) {
+export async function MintNFT(data = SAMPLE) {
 	try {
 		await loadWeb3();
-		let { cost, pid, UqUrl, name, description, url, trxnHash, sellerAddress } = SAMPLE;
+		let { cost, pid, UqUrl, name, description, url, trxnHash, sellerAddress } = data;
 		let validTill = 1616454545;
 
 		const callerAddress = '0xAF1e8d728390eA94ef700D9172FEeEFC34495DD4';
