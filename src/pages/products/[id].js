@@ -22,7 +22,7 @@ export default function ProductPage(props) {
 				router.push('/products');
 			}, 3000);
 		}
-		setProduct(props.product);
+		setProduct({ ...props?.product });
 
 		// buyProducts();
 		console.log(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS);

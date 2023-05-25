@@ -1,7 +1,19 @@
 import { toast } from 'react-toastify';
-import CallerABI from '../../blockchain/src/truffle_abis/Caller.json';
-import NFTABI from './abi/nft.json';
-import { CALLER_ADDRESS, NFT_ADDRESS } from './constants';
+import CallerABI from './abi/Caller.json';
+import NFTABI from './abi/NFT.json';
+// import VotingABI from './abi/Voting.json';
+import CheckDuplicateABI from './abi/checkDigitalDuplicate.json';
+import CheckRefurbishedABI from './abi/checkRefurbished.json';
+
+import {
+	CALLER_ADDRESS,
+	NFT_ADDRESS,
+	SEPOLIA_NFT_ADDRESS,
+	SEPOLIA_CALLER_ADDRESS,
+	SEPOLIA_CHECK_DUPLICATE_ADDRESS,
+	SEPOLIA_CHECK_REFURBISHED_ADDRESS,
+	SEPOLIA_VOTING_ADDRESS,
+} from './constants';
 
 const Web3 = require('web3');
 
@@ -65,47 +77,59 @@ const SAMPLE = {
 	trxnHash: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
 };
 
-export async function MintNFT(data = SAMPLE) {
+export async function MintNFT(data) {
 	try {
 		await loadWeb3();
-		let { cost, pid, UqUrl, name, description, url, trxnHash, sellerAddress } = data;
+		let { price, name, description, image, seller } = data;
+		let cost = price;
 		let validTill = 1616454545;
+		let UqUrl = _UqUrl();
 
-		const callerAddress = '0xAF1e8d728390eA94ef700D9172FEeEFC34495DD4';
+		// console.log('MintNFT', UqUrl, data);
+		// return;
+
+		const callerAddress = SEPOLIA_CALLER_ADDRESS;
 		const account = await getCurrentAccount();
 		console.log('account', account);
 		const callerContract = new web3.eth.Contract(CallerABI.abi, callerAddress);
 
+		// let result = await callerContract.methods
+		// 	.createNFT(
+		// 		cost,
+		// 		SAMPLE.pid || 1,
+		// 		SAMPLE.UqUrl,
+		// 		name || 'NFTMay',
+		// 		'NFT7Feb',
+		// 		image || 'https://res.cloudinary.com/dtaakwnul/image/upload/v1674631515/NFTCommerce/cars/mustang_gt/mustang_d_ezqhk1.webp',
+		// 		SAMPLE.trxnHash || '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
+		// 		seller || '0x82b4F2da4b06cD712ccCEEc9f64c0BCfFd3c6147',
+		// 		validTill || 1675769303076
+		// 	)
 		let result = await callerContract.methods
 			.createNFT(
-				(cost = 1000),
-				(pid = 1),
-				(UqUrl = 'https://PrashantAmoli.github.io'),
-				(name = 'NFT7Feb'),
-				(description = 'NFT7Feb'),
-				(url = 'https://PrashantAMoli.github.io'),
-				(trxnHash = '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4'),
-				(sellerAddress = '0x82b4F2da4b06cD712ccCEEc9f64c0BCfFd3c6147'),
-				(validTill = 1675769303076)
+				data?.price || 10000,
+				1,
+				UqUrl || 'NFT7Feb Desc',
+				data?.name || 'Default Name',
+				data?.description || 'Default Description',
+				data?.image || 'https://res.cloudinary.com',
+				'0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
+				'0x82b4F2da4b06cD712ccCEEc9f64c0BCfFd3c6147',
+				1675769303076
 			)
 			.send(
 				{
 					from: account,
 				},
 				function (err, result) {
-					if (err) {
-						console.log('Error');
-						console.log(err);
-					}
-					if (result) {
-						console.log('Success', result);
-					}
+					if (err) console.log('Error', err);
+					if (result) console.log('Success', result);
 				}
 			);
-		console.log(cost, pid, UqUrl, name, description, url, trxnHash, sellerAddress, validTill);
-		toast.success('Transaction Successfull! NFT minted for this product.');
+		toast.success(`Transaction Successfull! NFT minted for this product.`);
 		return result;
 	} catch (error) {
+		console.log(error);
 		toast.error('Transaction unsuccessfull! NFT not minted for this product.');
 	}
 
@@ -122,7 +146,7 @@ export async function MintNFT(data = SAMPLE) {
 export async function viewMyNFTs() {
 	try {
 		await loadWeb3();
-		const contractAddress = NFT_ADDRESS;
+		const contractAddress = SEPOLIA_NFT_ADDRESS;
 		const account = await getCurrentAccount();
 		console.log('account', account);
 		const nftContract = new web3.eth.Contract(NFTABI.abi, contractAddress);
@@ -141,21 +165,21 @@ export async function viewMyNFTs() {
 				}
 			}
 		);
-		return result;
+		return { nfts: result };
 	} catch (error) {
 		console.log('error', error);
 		toast.error(`${JSON.stringify(error)}`);
 	}
 }
-export async function viewNFTProp1() {
+export async function viewNFTProp1(tokenID) {
 	try {
 		await loadWeb3();
-		const contractAddress = NFT_ADDRESS;
+		const contractAddress = SEPOLIA_NFT_ADDRESS;
 		const account = await getCurrentAccount();
 		console.log('account', account);
 		const nftContract = new web3.eth.Contract(NFTABI.abi, contractAddress);
 
-		let result = await nftContract.methods.viewNFTPropByIndex1(account).call(
+		let result = await nftContract.methods.viewNFTPropByIndex1(tokenID).call(
 			{
 				from: account,
 			},
@@ -181,15 +205,15 @@ export async function viewNFTProp1() {
 		toast.error(`${JSON.stringify(error)}`);
 	}
 }
-export async function viewNFTProp2() {
+export async function viewNFTProp2(tokenID) {
 	try {
 		await loadWeb3();
-		const contractAddress = NFT_ADDRESS;
+		const contractAddress = SEPOLIA_NFT_ADDRESS;
 		const account = await getCurrentAccount();
 		console.log('account', account);
 		const nftContract = new web3.eth.Contract(NFTABI.abi, contractAddress);
 
-		let result = await nftContract.methods.viewNFTPropByIndex2(account).call(
+		let result = await nftContract.methods.viewNFTPropByIndex2(tokenID).call(
 			{
 				from: account,
 			},

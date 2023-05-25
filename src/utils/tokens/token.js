@@ -6,7 +6,7 @@ let colors = colorSchemes[1];
 
 export function generateSVG64(tokenId, year, month, day, color, title = '') {
 	try {
-		const svg = generateSVG(tokenId, year, month, day, color, title);
+		const svg = generateSVG(tokenId, year, month, day, color < 8 ? color : 6, title);
 		const base64encodedSVG = svg64(svg);
 		return base64encodedSVG;
 	} catch (error) {

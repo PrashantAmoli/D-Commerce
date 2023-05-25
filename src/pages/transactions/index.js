@@ -7,6 +7,8 @@ import { Tab } from '@headlessui/react';
 import { useSelector } from 'react-redux';
 import { viewMyNFTs, viewNFTProp1, viewNFTProp2 } from '@/data/contracts';
 import { toast } from 'react-toastify';
+import Image from 'next/image';
+import { generateSVG64 } from '@/utils/tokens/token';
 
 export default function Transactions() {
 	const [normalTxn, setNormalTxn] = useState({});
@@ -66,12 +68,20 @@ export default function Transactions() {
 		}
 	};
 
-	const getNFTProps = async () => {
+	const getNFTProps = async token => {
 		try {
-			const res1 = await viewNFTProp1(TokenId);
-			const res2 = await viewNFTProp2(TokenId);
+			const res1 = await viewNFTProp1(token);
+			const res2 = await viewNFTProp2(token);
 			console.log(res1, res2);
-			setNFTData({ ...res1, ...res2 });
+			const date = new Date(parseInt(res2.boughtOn));
+			const year = date.getFullYear();
+			const month = date.getMonth() + 1; // Month is zero-based, so we add 1
+			const day = date.getDate();
+
+			console.log('Year:', year);
+			console.log('Month:', month);
+			console.log('Day:', day);
+			setNFTData({ ...res1, ...res2, year, month, day });
 		} catch (error) {
 			console.log(error);
 			toast.error(error.message);
@@ -149,7 +159,7 @@ export default function Transactions() {
 					</Tab.Panel>
 
 					<Tab.Panel>
-						<section className="flex flex-col gap-2">
+						<section className="flex flex-col gap-4">
 							<h2 className="text-primary font-bold text-lg">My NFTs</h2>
 
 							<button className="btn btn-ghost" onClick={getMyNFTs}>
@@ -157,7 +167,58 @@ export default function Transactions() {
 							</button>
 
 							<MyDisclosure heading="My NFTS">
-								<p className="break-all">{JSON.stringify(myNFTs)}</p>
+								<div className="flex flex-col gap-1 px-5">
+									{myNFTs &&
+										myNFTs?.nfts?.length > 0 &&
+										myNFTs?.nfts?.map((nft, index) => {
+											return (
+												<div
+													className="w-full"
+													key={index}
+													onClick={async e => {
+														e.preventDefault();
+														try {
+															getNFTProps(nft);
+														} catch (error) {
+															console.log(error);
+															toast.error(error.message);
+														}
+													}}
+												>
+													<MyDisclosure heading={`NFT Token ID: ${nft}`}>
+														{NFTData && NFTData.name && NFTData.txnHash && NFTData.boughtOn && (
+															<>
+																<Image
+																	src={generateSVG64(nft, NFTData.year, NFTData.month, NFTData.day, parseInt(NFTData.nftType) + 4, NFTData.name)}
+																	alt="NFT Image"
+																	width={250}
+																	height={280}
+																	className="mx-auto shadow-lg hover:shadow-2xl hover:scale-105 rounded-xl my-4 transition-all"
+																/>
+
+																<div className="flex flex-col gap-1 my-4">
+																	<p className="text-primary">Name: {NFTData.name}</p>
+																	<p className="text-primary">Token ID: {nft}</p>
+																	<p className="text-primary">Type: {NFTData.nftType}</p>
+																	<p className="text-primary">
+																		Bought On: {NFTData.day}-{NFTData.month}-{NFTData.year} ({NFTData.boughtOn})
+																	</p>
+																	<p className="text-primary">Bought For: {NFTData.sellerAddress}</p>
+																	<p className="text-primary">Txn Hash: {NFTData.txnHash}</p>
+																	<p className="text-primary">Expiry: {NFTData.expiry}</p>
+																	<p className="text-primary">URL: {NFTData.url}</p>
+																</div>
+															</>
+														)}
+													</MyDisclosure>
+												</div>
+											);
+										})}
+
+									<MyDisclosure heading="My NFTS JSON Data">
+										<p className="break-all">{JSON.stringify(myNFTs)}</p>
+									</MyDisclosure>
+								</div>
 							</MyDisclosure>
 
 							<MyDisclosure heading="NFT Data">
@@ -178,7 +239,7 @@ export default function Transactions() {
 										onClick={async e => {
 											e.preventDefault();
 											try {
-												getNFTProps();
+												getNFTProps(TokenId);
 											} catch (error) {
 												console.log(error);
 												toast.error(error.message);
@@ -188,6 +249,16 @@ export default function Transactions() {
 										Get NFT Props by Token ID
 									</button>
 								</form>
+
+								{TokenId && NFTData && NFTData.name && NFTData.txnHash && NFTData.boughtOn && (
+									<Image
+										src={generateSVG64(TokenId, NFTData.year, NFTData.month, NFTData.day, parseInt(NFTData.nftType) + 4, NFTData.name)}
+										alt="NFT Image"
+										width={250}
+										height={280}
+										className="mx-auto shadow-lg hover:shadow-2xl hover:scale-105 rounded-xl my-4 transition-all"
+									/>
+								)}
 
 								<p className="break-all">{JSON.stringify(NFTData)}</p>
 							</MyDisclosure>

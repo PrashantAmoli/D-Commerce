@@ -36,14 +36,14 @@ export default function App({ Component, pageProps }) {
 					newestOnTop={false}
 					closeOnClick
 					rtl={false}
-					limit={4}
+					limit={3}
 					pauseOnFocusLoss
 					draggable
 					pauseOnHover
 					theme="dark"
-					className="py-2 px-3 bg-black/10 backdrop-blur-2xl cursor-pointer shadow-xl rounded-xl mt-5 overflow-hidden"
+					// className="py-2 px-3 cursor-pointer shadow-xl rounded-xl mt-5 overflow-hidden"
 					// toastClassName={() => 'bg-black/5 overflow-hidden'}
-					// bodyClassName={() => 'text-sm font-black truncate overflow-hidden'}
+					bodyClassName={() => 'text-sm font-black truncate overflow-hidden bg-black/10 backdrop-blur-2xl'}
 				/>
 			</ThemeProvider>
 		</Provider>
