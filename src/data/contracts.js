@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import CallerABI from './abi/Caller.json';
-import NFTABI from './abi/NFT.json';
 // import VotingABI from './abi/Voting.json';
+import NFTABI from './abi/NFT.json';
 import CheckDuplicateABI from './abi/checkDigitalDuplicate.json';
 import CheckRefurbishedABI from './abi/checkRefurbished.json';
 
