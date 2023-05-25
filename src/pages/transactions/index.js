@@ -172,11 +172,12 @@ export default function Transactions() {
 										myNFTs?.nfts?.length > 0 &&
 										myNFTs?.nfts?.map((nft, index) => {
 											return (
-												<div
-													className="w-full"
+												<MyDisclosure
+													heading={`NFT Token ID: ${nft}`}
 													key={index}
 													onClick={async e => {
 														e.preventDefault();
+
 														try {
 															getNFTProps(nft);
 														} catch (error) {
@@ -185,33 +186,31 @@ export default function Transactions() {
 														}
 													}}
 												>
-													<MyDisclosure heading={`NFT Token ID: ${nft}`}>
-														{NFTData && NFTData.name && NFTData.txnHash && NFTData.boughtOn && (
-															<>
-																<Image
-																	src={generateSVG64(nft, NFTData.year, NFTData.month, NFTData.day, parseInt(NFTData.nftType) + 4, NFTData.name)}
-																	alt="NFT Image"
-																	width={250}
-																	height={280}
-																	className="mx-auto shadow-lg hover:shadow-2xl hover:scale-105 rounded-xl my-4 transition-all"
-																/>
+													{NFTData && NFTData.name && NFTData.txnHash && NFTData.boughtOn && (
+														<>
+															<Image
+																src={generateSVG64(nft, NFTData.year, NFTData.month, NFTData.day, parseInt(NFTData.nftType) + 4, NFTData.name)}
+																alt="NFT Image"
+																width={250}
+																height={280}
+																className="mx-auto shadow-lg hover:shadow-2xl hover:scale-105 rounded-xl my-4 transition-all"
+															/>
 
-																<div className="flex flex-col gap-1 my-4">
-																	<p className="text-primary">Name: {NFTData.name}</p>
-																	<p className="text-primary">Token ID: {nft}</p>
-																	<p className="text-primary">Type: {NFTData.nftType}</p>
-																	<p className="text-primary">
-																		Bought On: {NFTData.day}-{NFTData.month}-{NFTData.year} ({NFTData.boughtOn})
-																	</p>
-																	<p className="text-primary">Bought For: {NFTData.sellerAddress}</p>
-																	<p className="text-primary">Txn Hash: {NFTData.txnHash}</p>
-																	<p className="text-primary">Expiry: {NFTData.expiry}</p>
-																	<p className="text-primary">URL: {NFTData.url}</p>
-																</div>
-															</>
-														)}
-													</MyDisclosure>
-												</div>
+															<div className="flex flex-col gap-1 my-4">
+																<p className="text-primary">Name: {NFTData.name}</p>
+																<p className="text-primary">Token ID: {nft}</p>
+																<p className="text-primary">Type: {NFTData.nftType}</p>
+																<p className="text-primary">
+																	Bought On: {NFTData.day}-{NFTData.month}-{NFTData.year} ({NFTData.boughtOn})
+																</p>
+																<p className="text-primary">Bought For: {NFTData.sellerAddress}</p>
+																<p className="text-primary">Txn Hash: {NFTData.txnHash}</p>
+																<p className="text-primary">Expiry: {NFTData.expiry}</p>
+																<p className="text-primary">URL: {NFTData.url}</p>
+															</div>
+														</>
+													)}
+												</MyDisclosure>
 											);
 										})}
 
