@@ -68,20 +68,25 @@ export default function Transactions() {
 		}
 	};
 
+	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	const getNFTProps = async token => {
 		try {
 			const res1 = await viewNFTProp1(token);
 			const res2 = await viewNFTProp2(token);
 			console.log(res1, res2);
-			const date = new Date(parseInt(res2.boughtOn));
+
+			const date = new Date(parseInt(res2.boughtOn) * 1000);
 			const year = date.getFullYear();
-			const month = date.getMonth() + 1; // Month is zero-based, so we add 1
+			const month = parseInt(date.getMonth()) + 1; // Month is zero-based
 			const day = date.getDate();
+			var hour = date.getHours();
+			var min = date.getMinutes();
+			var sec = date.getSeconds();
 
 			console.log('Year:', year);
 			console.log('Month:', month);
 			console.log('Day:', day);
-			setNFTData({ ...res1, ...res2, year, month, day });
+			setNFTData({ ...res1, ...res2, year, month, day, time: `${hour}:${min}:${sec}` });
 		} catch (error) {
 			console.log(error);
 			toast.error(error.message);
@@ -201,9 +206,10 @@ export default function Transactions() {
 																<p className="text-primary">Token ID: {nft}</p>
 																<p className="text-primary">Type: {NFTData.nftType}</p>
 																<p className="text-primary">
-																	Bought On: {NFTData.day}-{NFTData.month}-{NFTData.year} ({NFTData.boughtOn})
+																	Bought On: {NFTData.day}-{months[NFTData.month - 1]}-{NFTData.year} ({NFTData.boughtOn})
 																</p>
-																<p className="text-primary">Bought For: {NFTData.sellerAddress}</p>
+																<p className="text-primary">Time: {NFTData.time}</p>
+																<p className="text-primary">Seller: {NFTData.sellerAddress}</p>
 																<p className="text-primary">Txn Hash: {NFTData.txnHash}</p>
 																<p className="text-primary">Expiry: {NFTData.expiry}</p>
 																<p className="text-primary">URL: {NFTData.url}</p>

@@ -19,6 +19,7 @@ const navigation = [
 	{ name: 'Voting', href: '/voting' },
 	{ name: 'Products', href: '/products' },
 	{ name: 'Token', href: '/token' },
+	{ name: 'Others', href: '/others' },
 ];
 // { name: 'About', href: '/about' },
 

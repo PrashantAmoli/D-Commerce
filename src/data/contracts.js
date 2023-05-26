@@ -85,7 +85,8 @@ export async function MintNFT(data) {
 		let validTill = 1616454545;
 		let UqUrl = _UqUrl();
 
-		// console.log('MintNFT', UqUrl, data);
+		// let date = new Date.now()
+		// console.log(date);
 		// return;
 
 		const callerAddress = SEPOLIA_CALLER_ADDRESS;
